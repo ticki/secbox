@@ -1,0 +1,9 @@
+[package]
+name = "secbox"
+version = "0.1.0"
+authors = ["ticki <ticki@users.noreply.github.com>"]
+keywords = ["password", "secstr", "secure", "security", "protection"]
+exclude = ["target", "Cargo.lock"]
+
+[dependencies]
+libc = "0.2.14"
