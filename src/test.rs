@@ -80,3 +80,32 @@ fn test_clone_from() {
     assert_eq!(*bx, 0);
     assert_eq!(*bx2, 0);
 }
+
+#[test]
+fn test_dtor() {
+    use std::rc::Rc;
+    use std::cell::Cell;
+
+    struct Dropper {
+        dropped: Rc<Cell<bool>>,
+    }
+
+    impl Drop for Dropper {
+        fn drop(&mut self) {
+            // No double-drops.
+            assert!(!self.dropped.get());
+            self.dropped.set(true);
+        }
+    }
+
+    let d = Rc::new(Cell::new(false));
+    let d2 = d.clone();
+
+    let dropster = Dropper { dropped: d };
+
+    let bx = SecBox::new(dropster);
+
+    drop(bx);
+
+    assert!(d2.get());
+}

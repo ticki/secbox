@@ -36,7 +36,7 @@
 extern crate libc;
 
 use std::ptr::{self, Unique};
-use std::{mem, intrinsics, ops, fmt};
+use std::{mem, intrinsics, ops, fmt, slice};
 
 /// A secure box.
 ///
@@ -181,14 +181,19 @@ impl<T: ?Sized> fmt::Debug for SecBox<T> {
 impl<T: ?Sized> Drop for SecBox<T> {
     fn drop(&mut self) {
         unsafe {
-            // Drop the inner.
+            // Drop the inner data.
             ptr::drop_in_place(*self.inner);
             // Zero the content.
             intrinsics::volatile_set_memory(*self.inner as *mut u8, 0, mem::size_of_val(&**self));
+
+            // To avoid double-dropping, we convert our data into a byte string, which lacks of
+            // destructors.
+            let _buf = Box::from_raw(slice::from_raw_parts_mut(*self.inner as *mut u8, mem::size_of_val(&**self)));
+
             // Unlock the memory.
             self.memunlock();
-            // Drop the box itself.
-            drop(Box::from_raw(*self.inner));
+
+            // _buf (the buffer) is freed.
         }
     }
 }
