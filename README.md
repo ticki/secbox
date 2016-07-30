@@ -14,7 +14,7 @@ This is useful for storing sensitive data like passwords and private keys.
 ## Cargo.toml
 
 ```toml
-secbox = "0.1.0"
+secbox = "0.1"
 ```
 
 ## Example
