@@ -1,5 +1,7 @@
 [package]
 name = "secbox"
+description = "Sensitive data container."
+license = "MIT"
 version = "0.1.0"
 authors = ["ticki <ticki@users.noreply.github.com>"]
 keywords = ["password", "secstr", "secure", "security", "protection"]
